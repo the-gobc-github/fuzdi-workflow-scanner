@@ -1,0 +1,91 @@
+{
+    "nodes": [
+        {
+            "type": "CheckpointLoaderSimple",
+            "widgets_values": [
+                "flux1-dev.safetensors"
+            ],
+            "properties": {
+                "cnr_id": "comfy-core"
+            }
+        },
+        {
+            "type": "VAELoader",
+            "widgets_values": [
+                "ae.safetensors"
+            ],
+            "properties": {
+                "cnr_id": "comfy-core"
+            }
+        },
+        {
+            "type": "LoraLoader",
+            "widgets_values": [
+                "flux-realism-lora.safetensors",
+                1.0,
+                1.0
+            ],
+            "properties": {
+                "cnr_id": "comfy-core"
+            }
+        },
+        {
+            "type": "CLIPTextEncode",
+            "widgets_values": [
+                "A beautiful landscape"
+            ],
+            "properties": {
+                "cnr_id": "comfy-core"
+            }
+        },
+        {
+            "type": "KSampler",
+            "widgets_values": [
+                42,
+                "fixed",
+                20,
+                8.0,
+                "euler",
+                "normal"
+            ],
+            "properties": {
+                "cnr_id": "comfy-core"
+            }
+        },
+        {
+            "type": "VAEDecode",
+            "properties": {
+                "cnr_id": "comfy-core"
+            }
+        },
+        {
+            "type": "SaveImage",
+            "widgets_values": [
+                "ComfyUI"
+            ],
+            "properties": {
+                "cnr_id": "comfy-core"
+            }
+        },
+        {
+            "type": "ControlNetLoader",
+            "widgets_values": [
+                "control_v11p_sd15_canny.pth"
+            ],
+            "properties": {
+                "cnr_id": "custom-controlnet-node",
+                "ver": "1.2.0"
+            }
+        },
+        {
+            "type": "UpscaleModelLoader",
+            "widgets_values": [
+                "RealESRGAN_x4plus.pth"
+            ],
+            "properties": {
+                "cnr_id": "upscaler-node",
+                "ver": "2.1.5"
+            }
+        }
+    ]
+}

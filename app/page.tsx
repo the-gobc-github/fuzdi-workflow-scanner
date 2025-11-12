@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import FileDropzone from '@/components/FileDropzone';
 import ScanResults from '@/components/ScanResults';
+import DownloadLogs from '@/components/DownloadLogs';
 import { scanWorkflow } from '@/lib/workflow-scanner';
 import { ScanResult, WorkflowJSON } from '@/lib/types';
 
@@ -12,6 +13,8 @@ export default function Home() {
   const [workflowFileName, setWorkflowFileName] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [showDownloadLogs, setShowDownloadLogs] = useState(false);
+  const [uploadedWorkflowName, setUploadedWorkflowName] = useState<string>('');
 
   const handleFileProcessed = (data: WorkflowJSON, fileName: string) => {
     const result = scanWorkflow(data);
@@ -49,6 +52,9 @@ export default function Home() {
           type: 'success',
           message: `Successfully uploaded to ${data.location}`,
         });
+        // Trigger the download script
+        setUploadedWorkflowName(outputName);
+        setShowDownloadLogs(true);
       } else {
         setUploadStatus({
           type: 'error',
@@ -70,6 +76,22 @@ export default function Home() {
     setWorkflowData(null);
     setWorkflowFileName('');
     setUploadStatus(null);
+    setShowDownloadLogs(false);
+    setUploadedWorkflowName('');
+  };
+
+  const handleDownloadComplete = (success: boolean) => {
+    if (success) {
+      setUploadStatus({
+        type: 'success',
+        message: 'Resources downloaded and uploaded to Scaleway successfully!',
+      });
+    } else {
+      setUploadStatus({
+        type: 'error',
+        message: 'Resource download process encountered errors. Check logs above.',
+      });
+    }
   };
 
   return (
@@ -86,7 +108,7 @@ export default function Home() {
         </div>
 
         {/* Upload Status */}
-        {uploadStatus && (
+        {uploadStatus && !showDownloadLogs && (
           <div className={`max-w-4xl mx-auto mb-6 p-4 rounded-lg ${uploadStatus.type === 'success'
             ? 'bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800'
             : 'bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800'
@@ -101,7 +123,12 @@ export default function Home() {
         )}
 
         {/* Main Content */}
-        {!scanResult ? (
+        {showDownloadLogs ? (
+          <DownloadLogs
+            workflowName={uploadedWorkflowName}
+            onComplete={handleDownloadComplete}
+          />
+        ) : !scanResult ? (
           <FileDropzone onFileProcessed={handleFileProcessed} />
         ) : (
           <>
